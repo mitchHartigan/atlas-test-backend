@@ -3,7 +3,6 @@
 const { MongoClient, ObjectID } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
-const { request } = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -21,10 +20,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-var collection;
+const _loadCollection = async () => {
+  try {
+    await client.connect();
+    let collection = client.db("food").collection("recipes");
+
+    return collection;
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 app.get("/search", async (req, res) => {
   try {
+    let collection = await _loadCollection();
+
     let result = await collection
       .aggregate([
         {
@@ -46,6 +56,10 @@ app.get("/search", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.status(200).send({ serverMessage: "app running!" });
+});
+
 /* Endpoint for looking up a single item, copied from tutorial but needs
    to be reconfigured.
 */
@@ -59,13 +73,8 @@ app.get("/search", async (req, res) => {
 //   }
 // });
 
-app.listen("3000", async () => {
-  try {
-    await client.connect();
-    collection = client.db("food").collection("recipes");
-  } catch (err) {
-    console.log(err);
-  }
+app.listen("4000", async () => {
+  console.log("Server running.");
 });
 
 module.exports = app;
