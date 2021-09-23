@@ -10,7 +10,7 @@ const AWS = require("aws-sdk");
 const config = require("./_config");
 AWS.config.update(config);
 
-const dbUrl = `mongodb+srv://admin:${process.env.MONGODB_PASSWORD}@cluster0.vl3pn.mongodb.net/food?retryWrites=true&w=majority`;
+const dbUrl = `mongodb+srv://admin:bjX2dGUEnrK4Zyd@cluster0.vl3pn.mongodb.net/food?retryWrites=true&w=majority`;
 
 const app = express();
 const client = new MongoClient(dbUrl);
@@ -22,7 +22,7 @@ app.use(cors());
 const _loadCollection = async () => {
   try {
     await client.connect();
-    let collection = client.db("food").collection("recipes");
+    let collection = client.db("mortgagebanking").collection("Acronyms");
 
     return collection;
   } catch (err) {
@@ -40,9 +40,9 @@ app.get("/search", async (req, res) => {
           $search: {
             autocomplete: {
               query: `${req.query.term}`,
-              path: "name",
+              path: "Acronym",
               fuzzy: {
-                maxEdits: 2,
+                maxEdits: 1,
               },
             },
           },
@@ -51,7 +51,7 @@ app.get("/search", async (req, res) => {
       .toArray();
     res.send(result);
   } catch (err) {
-    res.status(500).send({ errorMessage: err.message });
+    res.status(502).send({ errorMessage: err.message });
   }
 });
 
