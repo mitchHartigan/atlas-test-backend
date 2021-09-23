@@ -1,0 +1,7 @@
+org: modjeska
+app: atlas-test-backend
+component: express
+name: atlas-test-backend
+
+inputs:
+  src: ./
