@@ -38,12 +38,27 @@ app.get("/search", async (req, res) => {
       .aggregate([
         {
           $search: {
-            autocomplete: {
-              query: `${req.query.term}`,
-              path: ["Acronym", "Text"],
-              fuzzy: {
-                maxEdits: 1,
-              },
+            compound: {
+              should: [
+                {
+                  autocomplete: {
+                    query: `${req.query.term}`,
+                    path: "Acronym",
+                    fuzzy: {
+                      maxEdits: 1,
+                    },
+                  },
+                },
+                {
+                  autocomplete: {
+                    query: `${req.query.term}`,
+                    path: "Text",
+                    fuzzy: {
+                      maxEdits: 1,
+                    },
+                  },
+                },
+              ],
             },
           },
         },
