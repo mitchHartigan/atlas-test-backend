@@ -40,7 +40,7 @@ app.get("/search", async (req, res) => {
           $search: {
             autocomplete: {
               query: `${req.query.term}`,
-              path: "Acronym",
+              path: ["Acronym", "Text"],
               fuzzy: {
                 maxEdits: 1,
               },
