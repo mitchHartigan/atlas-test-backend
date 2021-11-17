@@ -44,18 +44,12 @@ app.get("/search", async (req, res) => {
                   autocomplete: {
                     query: `${req.query.term}`,
                     path: "Acronym",
-                    fuzzy: {
-                      maxEdits: 1,
-                    },
                   },
                 },
                 {
                   autocomplete: {
                     query: `${req.query.term}`,
                     path: "Text",
-                    fuzzy: {
-                      maxEdits: 1,
-                    },
                   },
                 },
               ],
@@ -67,7 +61,7 @@ app.get("/search", async (req, res) => {
             _id: 0,
             Text: 1,
             Acronym: 1,
-            score: "relevance",
+            score: { $meta: "searchScore" },
           },
         },
       ])
