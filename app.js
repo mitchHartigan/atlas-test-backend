@@ -47,11 +47,6 @@ app.get("/search", async (req, res) => {
                     fuzzy: {
                       maxEdits: 1,
                     },
-                    score: {
-                      boost: {
-                        value: 2,
-                      },
-                    },
                   },
                 },
                 {
@@ -60,11 +55,6 @@ app.get("/search", async (req, res) => {
                     path: "Text",
                     fuzzy: {
                       maxEdits: 1,
-                    },
-                    score: {
-                      boost: {
-                        value: 2,
-                      },
                     },
                   },
                 },
