@@ -71,13 +71,11 @@ app.get("/search", async (req, res) => {
               ],
             },
           },
+        },
+        {
           $project: {
             _id: 0,
             Text: 1,
-            score: { $meta: "searchScore" },
-          },
-          $project: {
-            _id: 0,
             Acronym: 1,
             score: { $meta: "searchScore" },
           },
