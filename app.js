@@ -13,7 +13,6 @@ AWS.config.update(config);
 const dbUrl = `mongodb+srv://admin:bjX2dGUEnrK4Zyd@cluster0.vl3pn.mongodb.net/food?retryWrites=true&w=majority`;
 
 const app = express();
-const client = new MongoClient(dbUrl);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -21,6 +20,7 @@ app.use(cors());
 
 const _loadCollection = async () => {
   try {
+    const client = new MongoClient(dbUrl);
     await client.connect();
     let collection = client.db("mortgagebanking").collection("Acronyms");
 
@@ -38,34 +38,13 @@ app.get("/search", async (req, res) => {
       .aggregate([
         {
           $search: {
-            compound: {
-              should: [
-                {
-                  autocomplete: {
-                    query: `${req.query.term}`,
-                    path: "Acronym",
-                  },
-                },
-                {
-                  autocomplete: {
-                    query: `${req.query.term}`,
-                    path: "Text",
-                  },
-                },
-              ],
+            text: {
+              query: `${req.query.term}`,
+              path: ["Acronym", "Text"],
+              fuzzy: {
+                maxEdits: 2,
+              },
             },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            Text: 1,
-            Acronym: 1,
-            Citation: 1,
-            Definition: 1,
-            "Date Entered": 1,
-            "Description of use": 1,
-            score: { $meta: "searchScore" },
           },
         },
       ])
@@ -79,19 +58,6 @@ app.get("/search", async (req, res) => {
 app.get("/", (req, res) => {
   res.status(200).send({ serverMessage: "app running!" });
 });
-
-/* Endpoint for looking up a single item, copied from tutorial but needs
-   to be reconfigured.
-*/
-
-// app.get("/get/:id", async (req, res) => {
-//   try {
-//     let result = await collection.findOne({ _id: ObjectID(request.params.id) });
-//     res.send(result);
-//   } catch (err) {
-//     res.status(500).send({ errMessage: err.message });
-//   }
-// });
 
 app.listen("4000", async () => {
   console.log("Server running.");
