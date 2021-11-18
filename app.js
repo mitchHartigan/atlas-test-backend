@@ -47,6 +47,19 @@ app.get("/search", async (req, res) => {
             },
           },
         },
+        { $limit: 50 },
+        {
+          $project: {
+            _id: 1,
+            Acronym: 1,
+            Citation: 1,
+            "Description of use": 1,
+            "Date Entered": 1,
+            Text: 1,
+            Definition: 1,
+            score: { $meta: "searchScore" },
+          },
+        },
       ])
       .toArray();
     res.send(result);
