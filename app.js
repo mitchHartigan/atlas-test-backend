@@ -38,12 +38,23 @@ app.get("/search", async (req, res) => {
       .aggregate([
         {
           $search: {
-            text: {
-              query: `${req.query.term}`,
-              path: ["Acronym", "Text"],
-              fuzzy: {
-                maxEdits: 2,
-              },
+            compound: {
+              should: [
+                {
+                  text: {
+                    query: `${req.query.term}`,
+                    path: "Acronym",
+                    score: { boost: { value: 2 } },
+                  },
+                },
+                {
+                  text: {
+                    query: `${req.query.term}`,
+                    path: "Text",
+                    score: { boost: { value: 1 } },
+                  },
+                },
+              ],
             },
           },
         },
