@@ -44,11 +44,25 @@ app.get("/search", async (req, res) => {
                   text: {
                     query: `${req.query.term}`,
                     path: "Acronym",
-                    score: { boost: { value: 2 } },
+                    score: { boost: { value: 3 } },
                   },
                 },
                 {
                   text: {
+                    query: `${req.query.term}`,
+                    path: "Text",
+                    score: { boost: { value: 2 } },
+                  },
+                },
+                {
+                  autocomplete: {
+                    query: `${req.query.term}`,
+                    path: "Acronym",
+                    score: { boost: { value: 1 } },
+                  },
+                },
+                {
+                  autocomplete: {
                     query: `${req.query.term}`,
                     path: "Text",
                     score: { boost: { value: 1 } },
