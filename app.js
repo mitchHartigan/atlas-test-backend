@@ -34,59 +34,9 @@ app.get("/search", async (req, res) => {
   try {
     let collection = await _loadCollection();
 
-    let result = await collection
-      .aggregate([
-        {
-          $search: {
-            compound: {
-              should: [
-                {
-                  text: {
-                    query: `${req.query.term}`,
-                    path: "Acronym",
-                    score: { boost: { value: 3 } },
-                  },
-                },
-                {
-                  text: {
-                    query: `${req.query.term}`,
-                    path: "Text",
-                    score: { boost: { value: 2 } },
-                  },
-                },
-                {
-                  autocomplete: {
-                    query: `${req.query.term}`,
-                    path: "Acronym",
-                    score: { boost: { value: 1 } },
-                  },
-                },
-                {
-                  autocomplete: {
-                    query: `${req.query.term}`,
-                    path: "Text",
-                    score: { boost: { value: 1 } },
-                  },
-                },
-              ],
-            },
-          },
-        },
-        { $limit: 50 },
-        {
-          $project: {
-            _id: 1,
-            Acronym: 1,
-            Citation: 1,
-            "Description of use": 1,
-            "Date Entered": 1,
-            Text: 1,
-            Definition: 1,
-            score: { $meta: "searchScore" },
-          },
-        },
-      ])
-      .toArray();
+    let settings = JSON.parse(req.query.settings).settingsArr;
+
+    let result = await collection.aggregate(settings).toArray();
     res.send(result);
   } catch (err) {
     res.status(502).send({ errorMessage: err.message });
