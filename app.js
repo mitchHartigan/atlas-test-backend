@@ -22,7 +22,7 @@ const _loadCollection = async () => {
   try {
     const client = new MongoClient(dbUrl);
     await client.connect();
-    let collection = client.db("mortgagebanking").collection("Acronyms");
+    let collection = client.db("mortgagebanking").collection("UpdatedAcronyms");
 
     return collection;
   } catch (err) {
