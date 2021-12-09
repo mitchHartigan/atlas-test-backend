@@ -34,9 +34,33 @@ app.get("/search", async (req, res) => {
   try {
     let collection = await _loadCollection();
 
-    let settings = JSON.parse(req.query.settings).settingsArr;
+    let term = req.query.term;
 
-    let result = await collection.aggregate(settings).toArray();
+    let result = await collection
+      .aggregate([
+        {
+          $search: {
+            autocomplete: {
+              query: term,
+              path: "Acronym",
+            },
+          },
+        },
+        { $limit: 50 },
+        {
+          $project: {
+            _id: 1,
+            Acronym: 1,
+            Citation: 1,
+            "Description of use": 1,
+            "Date Entered": 1,
+            Text: 1,
+            Definition: 1,
+            score: { $meta: "searchScore" },
+          },
+        },
+      ])
+      .toArray();
     res.send(result);
   } catch (err) {
     res.status(502).send({ errorMessage: err.message });
